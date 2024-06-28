@@ -1,0 +1,37 @@
+name: Deploy Azure Function App
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v2
+
+    - name: Set up Python
+      uses: actions/setup-python@v2
+      with:
+        python-version: '3.10'
+
+    - name: Install dependencies
+      run: |
+        python -m pip install --upgrade pip
+        pip install -r requirements.txt
+
+    - name: Deploy to Azure Function App
+      uses: Azure/functions-action@v1
+      id: fa
+      with:
+        app-name: ${{ secrets.AZURE_FUNCTIONAPP_NAME }}
+        package: '.'
+        publish-profile: ${{ secrets.AZURE_FUNCTIONAPP_PUBLISH_PROFILE }}
+      env:
+        CosmosDB_URL: ${{ secrets.CosmosDB_URL }}
+        CosmosDB_Key: ${{ secrets.CosmosDB_Key }}
+        CosmosDB_Database: ${{ secrets.CosmosDB_Database }}
+        CosmosDB_Container: ${{ secrets.CosmosDB_Container }}
