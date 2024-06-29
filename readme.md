@@ -2,10 +2,13 @@
 
 This project demonstrates a serverless Cloud Resume API built using Azure Functions and Azure Cosmos DB for NoSQL storage.
 
+## Detailed Blog
+
+My first blog on hashnode https://sushantbagul.hashnode.dev/cloud-resume-api-with-azure
 
 ## **Project Overview**
 
-**Demo**
+**My Resume API**
 
 Access my resume data in JSON format by making a GET request to the following endpoint:
 
