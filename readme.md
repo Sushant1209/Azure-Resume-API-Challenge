@@ -2,6 +2,9 @@
 
 This project demonstrates a serverless Cloud Resume API built using Azure Functions and Azure Cosmos DB for NoSQL storage.
 
+
+## **Project Overview**
+
 **Demo**
 
 Access my resume data in JSON format by making a GET request to the following endpoint:
@@ -10,8 +13,8 @@ Access my resume data in JSON format by making a GET request to the following en
 https://sushantresumeapi.azurewebsites.net/resumeapi?id=1
 ```
 
-## **Project Overview**
 
+**Video Demonstration**
 <p align="center">
   <a href="https://youtu.be/ITMywdXAGdk">
     <img src="https://img.youtube.com/vi/ITMywdXAGdk/0.jpg" alt="Video Demo">
