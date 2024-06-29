@@ -73,8 +73,8 @@ jobs:
           publish-profile: ${{ secrets.AZURE_FUNCTIONAPP_PUBLISH_PROFILE }}
           scm-do-build-during-deployment: true
           enable-oryx-build: true
-      env:
-        CosmosDB_URL: ${{ secrets.CosmosDB_URL }}
-        CosmosDB_Key: ${{ secrets.CosmosDB_Key }}
-        CosmosDB_Database: ${{ secrets.CosmosDB_Database }}
-        CosmosDB_Container: ${{ secrets.CosmosDB_Container }}
+        env:
+          CosmosDB_URL: ${{ secrets.CosmosDB_URL }}
+          CosmosDB_Key: ${{ secrets.CosmosDB_Key }}
+          CosmosDB_Database: ${{ secrets.CosmosDB_Database }}
+          CosmosDB_Container: ${{ secrets.CosmosDB_Container }}
