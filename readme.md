@@ -10,6 +10,14 @@ Access my resume data in JSON format by making a GET request to the following en
 https://sushantresumeapi.azurewebsites.net/resumeapi?id=1
 ```
 
+## **Project Overview**
+
+<p align="center">
+  <a href="https://youtu.be/ITMywdXAGdk">
+    <img src="https://img.youtube.com/vi/ITMywdXAGdk/0.jpg" alt="Video Demo">
+  </a>
+</p>
+
 **Tech Stack**
 
 * **Azure Functions** (`serverless compute platform`) for building and running code without managing servers.
