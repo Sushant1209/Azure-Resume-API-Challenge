@@ -50,3 +50,4 @@ def resumeapi(req: func.HttpRequest) -> func.HttpResponse:
     except exceptions.CosmosHttpResponseError as e:
         logging.error(f"Error reading item from Cosmos DB: {e.message}")
         return func.HttpResponse("Error reading item from Cosmos DB", status_code=500)
+    
