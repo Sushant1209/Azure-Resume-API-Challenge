@@ -9,17 +9,19 @@ cosmos_url = os.getenv("CosmosDB_URL")
 cosmos_key = os.getenv("CosmosDB_Key")
 database_name = os.getenv("CosmosDB_Database")
 container_name = os.getenv("CosmosDB_Container")
+visitor_count_container_name = os.getenv("VisitorCount_Container")
 
 cosmos_client = CosmosClient(cosmos_url, credential=cosmos_key)
 database = cosmos_client.get_database_client(database_name)
 container = database.get_container_client(container_name)
+visitor_count_container = database.get_container_client(visitor_count_container_name)
 
 app = func.FunctionApp(http_auth_level=func.AuthLevel.ANONYMOUS)
 
 @app.route(route="resumeapi")
 def resumeapi(req: func.HttpRequest) -> func.HttpResponse:
     logging.info('Python HTTP trigger function processed a request.')
-    
+
     try:
         item_id = req.params.get('id')
         if not item_id:
@@ -27,63 +29,24 @@ def resumeapi(req: func.HttpRequest) -> func.HttpResponse:
 
         item_response = container.read_item(item=item_id, partition_key=item_id)
         basics_section = item_response.get('basics', {})
-        
+
+        # Update visitor count
+        visitor_count_item_id = 'visitor_count'
+        try:
+            visitor_count_item = visitor_count_container.read_item(item=visitor_count_item_id, partition_key=visitor_count_item_id)
+            current_count = visitor_count_item.get('count', 0)
+        except exceptions.CosmosResourceNotFoundError:
+            # Item does not exist, initialize the count
+            current_count = 0
+
+        new_count = current_count + 1
+        visitor_count_item = {'id': visitor_count_item_id, 'count': new_count}
+        visitor_count_container.upsert_item(visitor_count_item)
+
+        # Include the visitor count in the response
+        basics_section['visitor_count'] = new_count
+
         return func.HttpResponse(json.dumps(basics_section, indent=2), status_code=200)
     except exceptions.CosmosHttpResponseError as e:
         logging.error(f"Error reading item from Cosmos DB: {e.message}")
         return func.HttpResponse("Error reading item from Cosmos DB", status_code=500)
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-# import azure.functions as func
-# import logging
-# import json
-
-# data = {
-#         "name": "Sushant Bagul",
-#         "label": "Student",
-#         "email": "social.sushant18@gmail.com",
-#         "url": "https://sushant-bagul.github.io/",
-#         "location": {
-#             "city": "Mumbai",
-#             "countryCode": "IND",
-#             "region": "Asia"
-#         },
-#         "profiles": [
-#             {
-#                 "network": "Twitter",
-#                 "username": "tw_sushant18",
-#                 "url": "https://twitter.com/tw_sushant18"
-#             },
-#             {
-#                 "network": "LinkedIn",
-#                 "username": "sushant-bagul",
-#                 "url": "https://www.linkedin.com/in/sushant-bagul"
-#             }
-#         ]
-# }
-
-# app = func.FunctionApp(http_auth_level=func.AuthLevel.ANONYMOUS)
-
-# @app.route(route="resumeapi")
-# def resumeapi(req: func.HttpRequest) -> func.HttpResponse:
-#     logging.info('Python HTTP trigger function processed a request.')
-#     return func.HttpResponse(json.dumps(data,indent=2),
-#         status_code=200
-#     )
