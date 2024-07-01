@@ -43,7 +43,7 @@ def resumeapi(req: func.HttpRequest) -> func.HttpResponse:
         visitor_count_item = {'id': visitor_count_item_id, 'count': new_count}
         visitor_count_container.upsert_item(visitor_count_item)
 
-        # Include the visitor count in the response
+        # Include the visitor count
         basics_section['visitor_count'] = new_count
 
         return func.HttpResponse(json.dumps(basics_section, indent=2), status_code=200)
