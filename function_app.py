@@ -27,6 +27,7 @@ def resumeapi(req: func.HttpRequest) -> func.HttpResponse:
         if not item_id:
             return func.HttpResponse("Please pass an id in the query string", status_code=400)
 
+        # Read the resume item from the main container
         item_response = container.read_item(item=item_id, partition_key=item_id)
         basics_section = item_response.get('basics', {})
 
@@ -36,18 +37,17 @@ def resumeapi(req: func.HttpRequest) -> func.HttpResponse:
             visitor_count_item = visitor_count_container.read_item(item=visitor_count_item_id, partition_key=visitor_count_item_id)
             current_count = visitor_count_item.get('count', 0)
         except exceptions.CosmosResourceNotFoundError:
-            # Item does not exist, initialize the count
+            # If the visitor count item doesn't exist, start the count at 0
             current_count = 0
 
         new_count = current_count + 1
         visitor_count_item = {'id': visitor_count_item_id, 'count': new_count}
         visitor_count_container.upsert_item(visitor_count_item)
 
-        # Include the visitor count
+        # Include the updated visitor count in the response
         basics_section['visitor_count'] = new_count
 
         return func.HttpResponse(json.dumps(basics_section, indent=2), status_code=200)
     except exceptions.CosmosHttpResponseError as e:
         logging.error(f"Error reading item from Cosmos DB: {e.message}")
         return func.HttpResponse("Error reading item from Cosmos DB", status_code=500)
-    
